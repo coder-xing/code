@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
-gint N=0;
 typedef struct Node{
     char name[20];
     char sex[5];
@@ -20,21 +19,7 @@ typedef struct Linklist{
     node *tail;
     int length;
 }linklist;
-
-int addtail(linklist *stu,node *new){
-    if(stu->head==NULL){
-        stu->head=new;
-        stu->tail=new;
-        stu->length++;
-    }
-    else
-    {
-        stu->tail->next=new;
-        stu->tail=new;
-        stu->length++;
-    }
-    return 0;
-}
+linklist *stu;
 
 typedef struct aa{
     GtkWidget *entry;
@@ -47,93 +32,133 @@ typedef struct aa{
     GtkWidget *entry7;
 }q;
 
-char *name[20];     
-char *sex[5];       
-char *class[20];    
-char *school[10];   
-char *tel[10];      
-char *num[20];      
-char *building[20]; 
-char *dor[6];   
+q add;
+//初始化链表
+linklist* initlinklist(linklist *l){
+    l->head=NULL;
+    l->tail=NULL;
+    l->tail=NULL;
+    l->length=0;
+    return l;
+}
+//尾插入法
+int addtail(linklist *stu,node *new){
+    //new->next==NULL;
+    if(stu->head==NULL){
+        stu->head=new;
+        stu->length++;
+    }
+    else
+    {
+        stu->tail->next=new;
+        stu->length++;
+    }
+        stu->tail=new;
+    return 0;
+}
+int i=0;
+//保存链表数据
+int save_info()
+{
+    FILE *fp;
+    int count;
+    int j=0;
+    node *pcur=(node*)malloc(sizeof(node));
+    pcur->next=NULL;
+    pcur= stu->head;
 
-char *cha;
+if((fp=fopen("student2.txt","wb+"))==NULL)
+{
+    printf("open file error and save error !\n");
+    printf("open file error and save error !\n");
+    exit(0);
+}
+    //printf("open file error and save error !\n");
+while(pcur != NULL)
+{
+    if(fwrite(pcur,sizeof(node),1,fp)!=1)
+{
+    printf("write error\n");
+    exit(-1);
+}
+    j++;
+    pcur = pcur->next;
+}
+    free(pcur);
+    printf("save success!\n");
+    printf("save num =%d \n",j);
+    fclose(fp);
+}
+/*node* creat(){
+    node *p=(node*)malloc(sizeof(node));
+    return p;
+}*/
 
-int i=0; 
-/*
-void click(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    cha=(char*)malloc(sizeof(char)*50);  
-    strcpy(cha,word);
-     g_print("用户名是：%s\n",cha);
-     for(int a=0;a<=N;a++){
-	 if(strcmp(name[a],cha)==0)
-	     i=a;
-	 printf("i=%d",i);
-     }
+int read_info(){
+    FILE *fp;
+    node *p=NULL;
+    p=(node*)malloc(sizeof(node));
+    if((fp=fopen("student2.txt","r"))==NULL){
+	printf("read failed");
+	return 1;
+    }
+    while(fread(p,sizeof(stu),1,fp)==1){
+	addtail(stu,p);
+    p=(node*)malloc(sizeof(node));
+    if(p==NULL)
+	return 1;
+//	p=creat();
+    }
+    free(p);
+    fclose(fp);
 }
 
-void on_clicked1(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    name[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(name[N],word);
-     g_print("用户名是：%s\n",name[N]);
-     g_print("N=：%d\n",N);
+int show_info(){
+	node *p=NULL;
+	p=stu->head;
+	while(p!=NULL){
+	    printf("姓名        性别    班级      学号           电话号码            身份证                   宿舍楼      寝室    \n");
+	    printf("%-12s%-8s%-10s%-15s%-20s%-25s%-12s%-8s\n",p->name,p->sex,p->class,p->school,p->tel,p->num,p->building,p->dor);
+	    p=p->next;
+	}
+	free(p);
+}
+void on_clicked(GtkWidget *button,gpointer data){
+	node *p=NULL;
+	p=(node *)malloc(sizeof(node));
+	p->next=NULL;
+	 strcpy(p->name,gtk_entry_get_text(GTK_ENTRY(add.entry)));
+	 strcpy(p->sex,gtk_entry_get_text(GTK_ENTRY(add.entry1)));
+	 strcpy(p->class,gtk_entry_get_text(GTK_ENTRY(add.entry2)));
+	 strcpy(p->school,gtk_entry_get_text(GTK_ENTRY(add.entry3)));
+	 strcpy(p->tel,gtk_entry_get_text(GTK_ENTRY(add.entry4)));
+	 strcpy(p->num,gtk_entry_get_text(GTK_ENTRY(add.entry5)));
+	 strcpy(p->building,gtk_entry_get_text(GTK_ENTRY(add.entry6)));
+	 strcpy(p->dor,gtk_entry_get_text(GTK_ENTRY(add.entry7)));
+	 g_print("我的名字是%s\n",p->name);
+	 g_print("我的名字是%s\n",p->sex);
+	 g_print("我的名字是%s\n",p->class);
+	 g_print("我的名字是%s\n",p->school);
+	 g_print("我的名字是%s\n",p->tel);
+	 g_print("我的名字是%s\n",p->num);
+	 g_print("我的名字是%s\n",p->building);
+	 g_print("我的名字是%s\n",p->dor);
+	 addtail(stu,p);
+//	 save_info();
+	 show_info();
 }
 
-void on_clicked2(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    sex[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(sex[N],word);
-     g_print("用户名是：%s\n",sex[N]);
-} 
-void on_clicked3(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    class[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(class[N],word);
-     g_print("用户名是：%s\n",class[N]);
+gpointer create_entry(gint max, gboolean editable, gboolean visible){  //这是所有创建的输入文本框的函数
+         GtkWidget *entry;
+         entry = gtk_entry_new();//创建新的文本输入框
+         gtk_entry_set_max_length(GTK_ENTRY(entry),max);//定义最长输入字节数
+         gtk_entry_set_editable(GTK_ENTRY(entry),editable);//定义可编辑性
+         gtk_entry_set_visibility(GTK_ENTRY(entry),visible);//定义显示性
+         gtk_widget_show(entry);//打印出来
+         return entry;
 }
-void on_clicked4(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    school[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(school[N],word);
-     g_print("用户名是：%s\n",school[N]);
-}
-void on_clicked5(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    tel[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(tel[N],word);
-     g_print("用户名是：%s\n",tel[N]);
-}
-void on_clicked6(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    num[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(num[N],word);
-     g_print("用户名是：%s\n",num[N]);
-}
-void on_clicked7(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    building[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(building[N],word);
-     g_print("用户名是：%s\n",building[N]);
-}
-void on_clicked8(GtkWidget *button,GtkWidget *entry1){
-    const char *word = gtk_entry_get_text(GTK_ENTRY(entry1));  
-    dor[N]=(char*)malloc(sizeof(char)*50);  
-    strcpy(dor[N],word);
-     g_print("用户名是：%s\n",dor[N]);
-     N++;
-}*/ 
 
-void show_info(GtkWidget *widget, gpointer window){
-    GtkWidget *dialog;
-    dialog = gtk_message_dialog_new(window,
-    GTK_DIALOG_DESTROY_WITH_PARENT,
-    GTK_MESSAGE_INFO,
-    GTK_BUTTONS_OK,"添加完成", "title");
-    gtk_window_set_title(GTK_WINDOW(dialog), "信息");
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
+
 
 void clear(GtkWidget *button,gpointer entry){
 gtk_entry_set_text(entry, "" );
@@ -143,13 +168,7 @@ void deal(void) {
     GtkWidget *table;
     GtkWidget *button;
     GtkWidget *entry;
-    GtkWidget *entry1;
-    GtkWidget *entry2;
-    GtkWidget *entry3;
-    GtkWidget *entry4;
-    GtkWidget *entry5;
-    GtkWidget *entry6;
-    GtkWidget *entry7;
+
     GtkWidget *label;
     GtkWidget *label1;
     GtkWidget *label2;
@@ -160,16 +179,6 @@ void deal(void) {
     GtkWidget *label7;
     GtkWidget *label8;
 
-    /*stu *p;
-    p=(stu *)malloc(sizeof(stu));
-    p->name=entry;
-    p->sex=entry1;
-    p->class=entry2;
-    p->school=entry3;
-    p->tel=entry4;
-    p->num=entry5;
-    p->building=entry6;
-    p->dor=entry7;*/
     window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     gtk_window_set_title(GTK_WINDOW(window), "添加学生信息");  
@@ -182,23 +191,22 @@ void deal(void) {
    //设置按钮 
     button=gtk_button_new_with_label("添加");
    //创建文本框
-    entry=gtk_entry_new();
-    entry1=gtk_entry_new();
-    entry2=gtk_entry_new();
-    entry3=gtk_entry_new();
-    entry4=gtk_entry_new();
-    entry5=gtk_entry_new();
-    entry6=gtk_entry_new();
-    entry7=gtk_entry_new();
-    
-    gtk_entry_set_text(GTK_ENTRY(entry), " "); 
-    gtk_entry_set_text(GTK_ENTRY(entry1), " ");  
-    gtk_entry_set_text(GTK_ENTRY(entry2), " ");  
-    gtk_entry_set_text(GTK_ENTRY(entry3), " ");  
-    gtk_entry_set_text(GTK_ENTRY(entry4), " ");  
-    gtk_entry_set_text(GTK_ENTRY(entry5), " ");
-    gtk_entry_set_text(GTK_ENTRY(entry6), " ");
-    gtk_entry_set_text(GTK_ENTRY(entry7), " ");
+    add.entry= create_entry(30,TRUE,TRUE);    
+    add.entry1 = create_entry(30,TRUE,TRUE);    
+    add.entry2 = create_entry(30,TRUE,TRUE);    
+    add.entry3 = create_entry(30,TRUE,TRUE);    
+    add.entry4 = create_entry(30,TRUE,TRUE);    
+    add.entry5 = create_entry(30,TRUE,TRUE);    
+    add.entry6 = create_entry(30,TRUE,TRUE);    
+    add.entry7 = create_entry(30,TRUE,TRUE);    
+    gtk_entry_set_text(GTK_ENTRY(add.entry), " "); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry1), " ");  
+    gtk_entry_set_text(GTK_ENTRY(add.entry2), " ");  
+    gtk_entry_set_text(GTK_ENTRY(add.entry3), " ");  
+    gtk_entry_set_text(GTK_ENTRY(add.entry4), " ");  
+    gtk_entry_set_text(GTK_ENTRY(add.entry5), " ");
+    gtk_entry_set_text(GTK_ENTRY(add.entry6), " ");
+    gtk_entry_set_text(GTK_ENTRY(add.entry7), " ");
     //创建标签
     label=gtk_label_new("  ");
     label1=gtk_label_new("姓名");
@@ -220,18 +228,18 @@ void deal(void) {
     gtk_table_attach_defaults(GTK_TABLE(table),label7,0,4,35,40);
     gtk_table_attach_defaults(GTK_TABLE(table),label8,0,4,40,45);
     //文本框添加进容器
-    gtk_table_attach_defaults(GTK_TABLE(table),entry,5,15,5,10);
-    gtk_table_attach_defaults(GTK_TABLE(table),entry1,5,15,10,15);
-    gtk_table_attach_defaults(GTK_TABLE(table),entry2,5,15,15,20);
-    gtk_table_attach_defaults(GTK_TABLE(table),entry3,5,15,20,25);
-    gtk_table_attach_defaults(GTK_TABLE(table),entry4,5,15,25,30);
-    gtk_table_attach_defaults(GTK_TABLE(table),entry5,5,15,30,35);
-    gtk_table_attach_defaults(GTK_TABLE(table),entry6,5,15,35,40);
-    gtk_table_attach_defaults(GTK_TABLE(table),entry7,5,15,40,45);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry,5,15,5,10);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry1,5,15,10,15);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry2,5,15,15,20);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry3,5,15,20,25);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry4,5,15,25,30);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry5,5,15,30,35);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry6,5,15,35,40);
+    gtk_table_attach_defaults(GTK_TABLE(table),add.entry7,5,15,40,45);
 
     gtk_table_attach_defaults(GTK_TABLE(table),button,40,50,50,55);
-    g_signal_connect(button, "clicked", G_CALLBACK(on_clicked1),entry);  
-    g_signal_connect(button, "clicked", G_CALLBACK(on_clicked2),entry1);  
+    g_signal_connect(button, "clicked", G_CALLBACK(on_clicked),(gpointer) 1);  
+ /*   g_signal_connect(button, "clicked", G_CALLBACK(on_clicked2),entry1);  
     g_signal_connect(button, "clicked", G_CALLBACK(on_clicked3),entry2);  
     g_signal_connect(button, "clicked", G_CALLBACK(on_clicked4),entry3);  
     g_signal_connect(button, "clicked", G_CALLBACK(on_clicked5),entry4);  
@@ -245,8 +253,8 @@ void deal(void) {
     g_signal_connect(button, "clicked", G_CALLBACK(clear),entry4);  
     g_signal_connect(button, "clicked", G_CALLBACK(clear),entry5);  
     g_signal_connect(button, "clicked", G_CALLBACK(clear),entry6);  
-    g_signal_connect(button, "clicked", G_CALLBACK(clear),entry7);  
-    g_signal_connect(button, "clicked", G_CALLBACK(show_info),window);  
+    g_signal_connect(button, "clicked", G_CALLBACK(clear),entry7);*/  
+    //g_signal_connect(button, "clicked", G_CALLBACK(show_info),window);  
    //按钮添加进容器  
     //gtk_table_attach_defaults(GTK_TABLE(table),button,0,20,18,27);
     gtk_container_add(GTK_CONTAINER(window),table);
@@ -368,14 +376,6 @@ void  chazhao( GtkWidget *button6,gpointer data)
    //设置标签内容 
     gtk_label_set_text(GTK_LABEL(label),"请输入查找的学号");
    
-    gtk_label_set_text(GTK_LABEL(label1),name[i]);
-    gtk_label_set_text(GTK_LABEL(label2),sex[i]);
-    gtk_label_set_text(GTK_LABEL(label3),class[i]);
-    gtk_label_set_text(GTK_LABEL(label4),school[i]);
-    gtk_label_set_text(GTK_LABEL(label5),tel[i]);
-    gtk_label_set_text(GTK_LABEL(label6),num[i]);
-    gtk_label_set_text(GTK_LABEL(label7),building[i]);
-    gtk_label_set_text(GTK_LABEL(label8),dor[i]);
      
    //设置构件大小 
     gtk_widget_set_size_request(label,120,50);
@@ -418,7 +418,7 @@ void  chazhao( GtkWidget *button6,gpointer data)
     gtk_fixed_put(GTK_FIXED(fixed),label6,550,150);
     gtk_fixed_put(GTK_FIXED(fixed),label7,650,150);
     gtk_fixed_put(GTK_FIXED(fixed),label8,750,150);
-    g_signal_connect(button, "clicked", G_CALLBACK(click),entry);  
+    //g_signal_connect(button, "clicked", G_CALLBACK(click),entry);  
     g_signal_connect(fixed, "destroy", G_CALLBACK(gtk_main_quit), NULL);  
 
     gtk_container_add(GTK_CONTAINER(window),fixed);
@@ -427,15 +427,48 @@ void  chazhao( GtkWidget *button6,gpointer data)
 }
 
 
-void xianshi(GtkWidget *button6)
+void xianshi(GtkWidget *button6){
+    g_print("hello");
+    GtkWidget *window;
+    GtkWidget *textview;
+    GtkTextBuffer *buffer;
+    GtkWidget *fixed;
+    GtkWidget *notebook;
+    gchar buf[300]="\0";
+    node *p;
+    p=stu->head;
+    show_info();
+    window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    //3.设置窗口标题  
+    gtk_window_set_title(GTK_WINDOW(window), "学生信息显示");  
+    //4.窗口在显示器中居中显示  
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);  
+    //5.设置窗口最小大小  
+    gtk_widget_set_size_request(window,600,400);  
+    fixed=gtk_fixed_new();
+    GtkWidget *label;
+    notebook =gtk_notebook_new();
+    sprintf(buf,"%-12s%-8s%-10s%-15s%-20s%-25s%-12s%-8s\n",p->name,p->sex,p->class,p->school,p->tel,p->num,p->building,p->dor);
+    label=gtk_label_new("显示所有信息"); 
+    textview = gtk_text_view_new();
+    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+    gtk_widget_show(textview);
+    gtk_text_buffer_set_text(buffer, buf, -1);
+    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), textview, label);
+    //gtk_widget_set_size_request(label,100,100);
+    gtk_widget_set_size_request(notebook,300,300);
+   // gtk_fixed_put(GTK_FIXED(fixed),label,50,20);
+    gtk_fixed_put(GTK_FIXED(fixed),notebook,20,40);
+    gtk_container_add(GTK_CONTAINER(window),fixed);
+    gtk_widget_show_all(window);
+}
+
+void shi(GtkWidget *button6)
 {
 
 GtkWidget *window;
-
 GtkWidget *clist;
-g_print("N=%d",N);
-gchar *text1[8]={name[1],sex[1],class[1],school[1],tel[1],num[1],building[1],dor[1]}; /*定义列表项数据*/
-gchar *text2[8]={"刘备","男","23","ss","ss","ss","ss","ss"}; /*定义列表项数据*/
+gchar *text2[8]={"刘备","男","23","ss","ss","ss","ss","ss"}; //定义列表项数据
 
 window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -443,10 +476,14 @@ gtk_signal_connect(GTK_OBJECT(window),"delete_event",GTK_SIGNAL_FUNC(gtk_main_qu
 
 gtk_widget_set_size_request(window,800,600);
 
-gtk_container_set_border_width(GTK_CONTAINER(window),10);
+gtk_container_set_border_width(GTK_CONTAINER(window),8);
 
+    //gtk_widget_set_size_request(clist,300,300);
 clist=gtk_clist_new(8);
 
+gtk_clist_set_column_justification( (GtkCList *)clist, 0 ,GTK_JUSTIFY_CENTER );
+gtk_clist_set_column_width( (GtkCList *)clist,0,60 );
+gtk_clist_set_row_height( (GtkCList *)clist,20 );
 gtk_clist_set_column_title(GTK_CLIST(clist),0,"姓名");
 gtk_clist_set_column_title(GTK_CLIST(clist),1,"性别");
 gtk_clist_set_column_title(GTK_CLIST(clist),2,"班级");
@@ -455,9 +492,6 @@ gtk_clist_set_column_title(GTK_CLIST(clist),4,"电话");
 gtk_clist_set_column_title(GTK_CLIST(clist),5,"身份证");
 gtk_clist_set_column_title(GTK_CLIST(clist),6,"宿舍楼");
 gtk_clist_set_column_title(GTK_CLIST(clist),7,"寝室");
-
-
-gtk_clist_prepend(GTK_CLIST(clist),text1);/*将列表项数据添加到列表*/
 
 gtk_clist_prepend(GTK_CLIST(clist),text2);
 
@@ -470,14 +504,14 @@ gtk_widget_show(clist);
 
 gtk_widget_show(window);
 
-gtk_main();}
-
+}
 
 int main(int argc,char *argv[])  
 {  
     //1.gtk环境初始化  
-    //linklist l;
     gtk_init(&argc, &argv);  
+    linklist l;
+    stu=initlinklist(&l);
     //2.创建一个窗口  
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
     GtkWidget *table;
@@ -495,13 +529,10 @@ int main(int argc,char *argv[])
     gtk_table_set_col_spacings(GTK_TABLE(table), 8);
     //3.设置窗口标题  
     gtk_window_set_title(GTK_WINDOW(window), "档案管理系统");  
-  
     //4.窗口在显示器中居中显示  
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);  
-  
     //5.设置窗口最小大小  
     gtk_widget_set_size_request(window, 1000,800);  
-  
     //6.固定窗口大小  
     gtk_window_set_resizable(GTK_WINDOW(window), TRUE); 
     //创建按钮
@@ -531,7 +562,7 @@ int main(int argc,char *argv[])
     g_signal_connect(button5, "pressed", G_CALLBACK(gtk_main_quit), NULL);  
     g_signal_connect(button6, "pressed", G_CALLBACK(xianshi), NULL);  
     g_signal_connect(button7, "pressed", G_CALLBACK(gtk_main_quit), NULL);  
-    g_signal_connect(table, "destroy", G_CALLBACK(gtk_main_quit), NULL);  
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);  
   
     //8.显示所有窗口  
     gtk_widget_show_all(window);  
