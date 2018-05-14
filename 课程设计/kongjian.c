@@ -2,78 +2,45 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
-int N=0;
-void chazhao1(GtkWidget*);
-void chazhao2(GtkWidget*);
-void chazhao3(GtkWidget*);
-typedef struct Node{
-    char name[20];
-    char sex[8];
-    char class[20];
-    char school[10];
-    char tel[10];
-    char num[20];
-    char zhuanye[20];
-    char dor[6];
-    struct Node *next;
-}node;
-
-typedef struct Lab{
-    GtkWidget *la1;
-    GtkWidget *la2;
-    GtkWidget *la3;
-    GtkWidget *la4;
-    GtkWidget *la5;
-    GtkWidget *la6;
-    GtkWidget *la7;
-    GtkWidget *la8;
-}lab;
-static GtkWidget* entry1;  
-static GtkWidget* entry2;  
-    GtkWidget* window;  
+#include"kongjian.h"
+GtkWidget* entry1;
+ GtkWidget* entry2;
+    GtkWidget* window;
 //查找函数标签指针
     GtkWidget *la,*lb,*lc;
-lab biao,biao1,biao2,biao3,biao4;
+lab biao,biao1,biao2,biao3,biao4,biao5,biao6;
 //修改文本框
     GtkWidget *en1,*en2,*en3,*en4,*en5,*en6,*en7,*en8;
-    GtkWidget *la,*lb,*lc;
-    GtkWidget *txt,*txt1,*txt2,*txt3,*txt4;
+GtkWidget *la,*lb,*lc;
+    GtkWidget *txt,*txt1,*txt2,*txt3,*txt4,*txt5,*txt6,*txt7,*txt8;
+int i=0,N=0,row=0;
+int de=0;
+char sexx[4]="\0";
+GdkPixbuf *create_pixbuf (const gchar *filename)
+{
+       GdkPixbuf *pixbuf;
+       GError *error = NULL;
+       pixbuf = gdk_pixbuf_new_from_file(filename, &error);
+       if(!pixbuf)
+       {
+               fprintf(stderr, "%s\n", error->message);
+               g_error_free(error);
+       }
+       else
+               ;
+}
 
-typedef GtkWidget* wenben;
-
-wenben txt,txt1,txt2,txt3,txt4;
-//wenben radio_button1,radio_button2;
-typedef struct Linklist{
-    node *head;
-    node *tail;
-    int length;
-}linklist;
-
-linklist *stu;
-
-typedef struct aa{
-    GtkWidget *entry;
-//    GtkWidget *entry1;
-    GtkWidget *entry2;
-    GtkWidget *entry3;
-    GtkWidget *entry4;
-    GtkWidget *entry5;
-    GtkWidget *entry6;
-    GtkWidget *entry7;
-}q;
-
-q add;
 //初始化链表
 linklist* initlinklist(linklist *l){
     l->head=NULL;
     l->tail=NULL;
-    l->tail=NULL;
+    //l->tail=NULL;
     l->length=0;
     return l;
 }
 //尾插入法
 int addtail(linklist *stu,node *new){
-//    new->next==NULL;
+    //new->next==NULL;
     if(stu->head==NULL){
         stu->head=new;
         stu->length++;
@@ -86,7 +53,7 @@ int addtail(linklist *stu,node *new){
         stu->tail=new;
     return 0;
 }
-int i=0;
+
 //保存链表数据
 int save_info(GtkWidget *button6)
 {
@@ -97,82 +64,107 @@ int save_info(GtkWidget *button6)
     pcur->next=NULL;
     pcur= stu->head;
 
-if((fp=fopen("student2.txt","wb+"))==NULL)
-{
-    printf("open file error and save error !\n");
-    printf("open file error and save error !\n");
-    exit(0);
+    if((fp=fopen("student2.txt","wb+"))==NULL)
+    {
+	printf("open file error and save error !\n");
+	printf("open file error and save error !\n");
+	exit(0);
 }
     //printf("open file error and save error !\n");
-while(pcur != NULL)
+    while(pcur != NULL)
 {
-    if(fwrite(pcur,sizeof(node),1,fp)!=1)
+	if(fwrite(pcur,sizeof(node),1,fp)!=1)
 {
-    printf("write error\n");
-    exit(-1);
+	printf("write error\n");
+	exit(-1);
 }
-    j++;
-    pcur = pcur->next;
+	j++;
+	pcur = pcur->next;
 }
-    free(pcur);
-    printf("save success!\n");
-    printf("save num =%d \n",j);
-    fclose(fp);
+	free(pcur);
+	printf("save success!\n");
+	printf("save num =%d \n",j);
+	fclose(fp);
 }
 
 linklist * load_info() //必须在主函数把链表传进来，否则执行完子函数后链表就释放了
 {
-FILE *fp;
-int i;
-
-node *p = (node*)malloc(sizeof(node));
-memset(p,0,sizeof(node));
-if((fp=fopen("student2.txt","rb+"))==NULL)
-{
-printf("open file error !\n");
-exit(-1);
-}
-
-while(feof(fp)==0)
-{
-i= fread(p, sizeof(node), 1, fp);//读取成功就返回1，否则返回0
-
-if(i==0) //如果没有读到内容，就跳出循环，否则就插入了一个空节点
-break;
-addtail(stu, p);
-
-p = (node*)malloc(sizeof(node)); //必须创建新的节点才可以插入，节点不能重复使用
-memset(p,0,sizeof(node));
-
-}
-
-fclose(fp); //操作完之后立即关闭
-
-return 0;
-}
-
-int read_info(){
     FILE *fp;
-    node *p=NULL;
-    p=(node*)malloc(sizeof(node));
-    if((fp=fopen("student2.txt","r"))==NULL){
-	printf("read failed");
-	return 1;
-    }
-    while(fread(p,sizeof(stu),1,fp)==1){
-	addtail(stu,p);
-    p=(node*)malloc(sizeof(node));
-    if(p==NULL)
-	return 1;
-//	p=creat();
-    }
-    free(p);
-    fclose(fp);
+    node *p = (node*)malloc(sizeof(node));
+    memset(p,0,sizeof(node));
+    if((fp=fopen("student2.txt","rb+"))==NULL)
+{
+	printf("open file error !\n");
+	exit(-1);
 }
-char sexx[4]="\0";
+    while(feof(fp)==0)
+{
+    i= fread(p, sizeof(node), 1, fp);//读取成功就返回1，否则返回0
+    if(i==0) //如果没有读到内容，就跳出循环，否则就插入了一个空节点
+	break;
+    addtail(stu, p);
+    p = (node*)malloc(sizeof(node)); //必须创建新的节点才可以插入，节点不能重复使用
+    memset(p,0,sizeof(node));
+}
+    fclose(fp); //操作完之后立即关闭
+    return 0;
+}
+void delete_informat() 
+{
+    int i=0;
+    node *p = stu->head;
+    if(N == 1||N == 0) //删除第一个元素独立处理
+{
+	stu->head = stu->head->next;
+	p->next = NULL;
+}
+    else{
+	while(p != NULL && i <N-1)
+{
+	p = p->next;
+	i++;}
+ if( i<N-1 ||p==NULL ) 
+{
+	printf("delete error !\n");
+	exit(-1);}
+	p->next = p->next->next;
+}
+
+    gtk_entry_set_text(GTK_ENTRY(txt4), ""); 
+    gtk_label_set_text(GTK_LABEL(biao5.la1),"");
+    gtk_label_set_text(GTK_LABEL(biao5.la2),"");
+    gtk_label_set_text(GTK_LABEL(biao5.la3),"");
+    gtk_label_set_text(GTK_LABEL(biao5.la4),"");
+    gtk_label_set_text(GTK_LABEL(biao5.la5),"");
+    gtk_label_set_text(GTK_LABEL(biao5.la6),"");
+    gtk_label_set_text(GTK_LABEL(biao5.la7),"");
+    gtk_label_set_text(GTK_LABEL(biao5.la8),"");
+	return;
+ }                        
 void show_dia(GtkWidget *button, gpointer window){
     GtkWidget *dialog;
     dialog = gtk_message_dialog_new(window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_OK,"添加完成", "通知");
+    gtk_window_set_title(GTK_WINDOW(dialog), "通知");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+void save_dia(GtkWidget *button6, gpointer window){
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_OK,"保存完成", "通知");
+    gtk_window_set_title(GTK_WINDOW(dialog), "通知");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+void load_dia(GtkWidget *button5, gpointer window){
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_OK,"读入完成", "通知");
+    gtk_window_set_title(GTK_WINDOW(dialog), "通知");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+void delete_dia(GtkWidget *butt9, gpointer window){
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new(window,GTK_DIALOG_DESTROY_WITH_PARENT,GTK_MESSAGE_INFO,GTK_BUTTONS_OK,"删除成功", "通知");
     gtk_window_set_title(GTK_WINDOW(dialog), "通知");
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
@@ -185,6 +177,16 @@ void women(){
     strcpy(sexx,"女");
 }
 
+void show_nameinfo(linklist *t){
+	node *p=NULL;
+	p=t->head;
+	while(p!=NULL){
+	    printf("姓名        性别    班级      学号           电话号码            身份证                   专业      寝室    \n");
+	    printf("%-12s%-8s%-10s%-15s%-20s%-25s%-12s%-8s\n",p->name,p->sex,p->class,p->school,p->tel,p->num,p->zhuanye,p->dor);
+	    p=p->next;
+	}
+	free(p);
+}
 int show_info(){
 	node *p=NULL;
 	p=stu->head;
@@ -217,7 +219,6 @@ void on_clicked(GtkWidget *button,gpointer data){
 	 g_print("我的名字是%s\n",p->zhuanye);
 	 g_print("我的名字是%s\n",p->dor);
 	 addtail(stu,p);
-//	 save_info();
 	 show_info();
 }
 
@@ -233,17 +234,16 @@ gpointer create_entry(gint max, gboolean editable, gboolean visible){  //这是�
 
 
 void clear(GtkWidget *button){
-    gtk_entry_set_text(GTK_ENTRY(add.entry), " "); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry), ""); 
 //    gtk_entry_set_text(GTK_ENTRY(add.entry1), " "); 
-    gtk_entry_set_text(GTK_ENTRY(add.entry2), " "); 
-    gtk_entry_set_text(GTK_ENTRY(add.entry3), " "); 
-    gtk_entry_set_text(GTK_ENTRY(add.entry4), " "); 
-    gtk_entry_set_text(GTK_ENTRY(add.entry5), " "); 
-    gtk_entry_set_text(GTK_ENTRY(add.entry6), " "); 
-    gtk_entry_set_text(GTK_ENTRY(add.entry7), " "); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry2), ""); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry3), ""); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry4), ""); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry5), ""); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry6), ""); 
+    gtk_entry_set_text(GTK_ENTRY(add.entry7), ""); 
 }
 
-//void (GtkWidget *radio_button1)
 //添加信息函数
 void deal(void) {
     GtkWidget *window;
@@ -271,7 +271,6 @@ void deal(void) {
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);  
     
     gtk_widget_set_size_request(window, 800,600);  
-
     table=gtk_table_new(20,10,TRUE);
    //设置按钮 
     button=gtk_button_new_with_label("添加");
@@ -296,7 +295,7 @@ void deal(void) {
     gtk_entry_set_text(GTK_ENTRY(add.entry5), "");
     gtk_entry_set_text(GTK_ENTRY(add.entry6), "");
     gtk_entry_set_text(GTK_ENTRY(add.entry7), "");
-    //创建标签
+    // 创建标签
     label=gtk_label_new("");
     label1=gtk_label_new("姓名");
     label2=gtk_label_new("性别");
@@ -350,6 +349,10 @@ void search_info(void){
     gtk_widget_set_size_request(window, 800,600);  
     GtkWidget *fixed;
     fixed =gtk_fixed_new();
+    GtkWidget *image;
+    image=gtk_image_new_from_file("zhi.jpg");
+    gtk_widget_set_size_request(image, 800,600);  
+    gtk_container_add(GTK_CONTAINER(fixed),image);
     
     GtkWidget *label;
     GtkWidget *label1;
@@ -368,8 +371,17 @@ void search_info(void){
     button3=gtk_button_new_with_label("电话号码查找");
     button4=gtk_button_new_with_label("姓名查找");
     button5=gtk_button_new_with_label("班级查找");
-    button6=gtk_button_new_with_label("宿舍楼查找");
+    button6=gtk_button_new_with_label("专业查找");
     button7=gtk_button_new_with_label("寝室查找");
+    //gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button1), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button2), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button3), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button4), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button5), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button6), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button7), GTK_RELIEF_NONE);
+    //gtk_button_set_relief(GTK_BUTTON(button8), GTK_RELIEF_NONE);
 /*设置标签*/
     label=gtk_label_new("精确查找");
     label1=gtk_label_new("模糊查找");
@@ -397,10 +409,10 @@ void search_info(void){
     g_signal_connect(button1, "clicked", G_CALLBACK(chazhao1),NULL);  
     g_signal_connect(button2, "clicked", G_CALLBACK(chazhao2),NULL);  
     g_signal_connect(button3, "clicked", G_CALLBACK(chazhao3),NULL);  
- /*   g_signal_connect(button1, "clicked", G_CALLBACK(chazhao), (gpointer)4);  
-    g_signal_connect(button1, "clicked", G_CALLBACK(chazhao), (gpointer)5);  
-    g_signal_connect(button1, "clicked", G_CALLBACK(chazhao), (gpointer)6);  
-    g_signal_connect(button1, "clicked", G_CALLBACK(chazhao), (gpointer)7); */ 
+    g_signal_connect(button4, "clicked", G_CALLBACK(chazhao4), NULL);  
+    g_signal_connect(button5, "clicked", G_CALLBACK(chazhao5), NULL);  
+    g_signal_connect(button6, "clicked", G_CALLBACK(chazhao6), NULL);  
+    g_signal_connect(button7, "clicked", G_CALLBACK(chazhao7), NULL); 
     g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);  
     
     gtk_container_add(GTK_CONTAINER(window),fixed);
@@ -408,6 +420,7 @@ void search_info(void){
 }
 //按身份证号查找子函数
 int get_num(GtkWidget *butt){
+    int j=0;
     gchar bb[15];
     node *p=NULL;
     p=(node*)malloc(sizeof(node)); 
@@ -424,8 +437,10 @@ int get_num(GtkWidget *butt){
 		break;
 	    } 
 	else{
-	    p=p->next;} 
+	    p=p->next;j++;} 
    } 
+   if(j>=stu->length)
+       return 0;
     gtk_label_set_text(GTK_LABEL(biao.la1),p->name);
     gtk_label_set_text(GTK_LABEL(biao.la2),p->sex);
     gtk_label_set_text(GTK_LABEL(biao.la3),p->class);
@@ -448,7 +463,8 @@ int get_school(GtkWidget *butt){
 	g_print("p为空");
 	return 1;}
    while(p!=NULL&&strcmp(p->school,bb)!=0){
-	    p=p->next;j++;}
+	    p=p->next;
+    j++;}
    if(j>=stu->length)
        return 0;
     gtk_label_set_text(GTK_LABEL(biao1.la1),p->name);
@@ -481,10 +497,8 @@ int get_school1(GtkWidget *butt){
    if(N==stu->length){
        return 0;
    }
-	//g_print("p为空");
     gtk_label_set_text(GTK_LABEL(biao3.la1),p->name);
     gtk_label_set_text(GTK_LABEL(biao3.la2),p->sex);
-	g_print("p为空");
     gtk_label_set_text(GTK_LABEL(biao3.la3),p->class);
     gtk_label_set_text(GTK_LABEL(biao3.la4),p->school);
     gtk_label_set_text(GTK_LABEL(biao3.la5),p->tel);
@@ -492,8 +506,10 @@ int get_school1(GtkWidget *butt){
     gtk_label_set_text(GTK_LABEL(biao3.la7),p->zhuanye);
     gtk_label_set_text(GTK_LABEL(biao3.la8),p->dor);
 }
+
 //根据电话号码查询
 int get_tel(GtkWidget *butt){
+    int j=0;
     gchar bb[40];
     node *p=NULL;
     p=(node*)malloc(sizeof(node)); 
@@ -503,8 +519,10 @@ int get_tel(GtkWidget *butt){
     if(p==NULL){
 	g_print("p为空");
 	return 1;}
-   while(p!=NULL&&0==strcmp(p->tel,bb)) 
-	    p=p->next; 
+   while(p!=NULL&&strcmp(p->tel,bb)) {
+	    p=p->next; j++;} 
+    if(j>=stu->length)
+	return 0;
     gtk_label_set_text(GTK_LABEL(biao2.la1),p->name);
     gtk_label_set_text(GTK_LABEL(biao2.la2),p->sex);
     gtk_label_set_text(GTK_LABEL(biao2.la3),p->class);
@@ -514,14 +532,52 @@ int get_tel(GtkWidget *butt){
     gtk_label_set_text(GTK_LABEL(biao2.la7),p->zhuanye);
     gtk_label_set_text(GTK_LABEL(biao2.la8),p->dor);
 }
-//个人信息查找窗口
+//删除查找界面
+int delete_search(GtkWidget *butt){
+    //int j=0;
+    N=0;
+    gchar bb[40];
+    node *p=NULL;
+    p=(node*)malloc(sizeof(node)); 
+    p=stu->head;
+    strcpy(bb,gtk_entry_get_text(GTK_ENTRY(txt4)));
+   //如果无数据则直接退出此函数 
+    if(p==NULL){
+	g_print("p为空");
+	return 1;}
+   while(p!=NULL&&strcmp(p->school,bb)) {
+	    p=p->next;
+   N++;
+   g_print("N=%d",N);} 
+   if(N>=stu->length)
+       return 0;
+    gtk_label_set_text(GTK_LABEL(biao5.la1),p->name);
+    gtk_label_set_text(GTK_LABEL(biao5.la2),p->sex);
+    gtk_label_set_text(GTK_LABEL(biao5.la3),p->class);
+    gtk_label_set_text(GTK_LABEL(biao5.la4),p->school);
+    gtk_label_set_text(GTK_LABEL(biao5.la5),p->tel);
+    gtk_label_set_text(GTK_LABEL(biao5.la6),p->num);
+    gtk_label_set_text(GTK_LABEL(biao5.la7),p->zhuanye);
+    gtk_label_set_text(GTK_LABEL(biao5.la8),p->dor);
+}
+/*清理标签栏和输入构件*/
+void chazhao1_clear(GtkWidget *button9){
+    gtk_entry_set_text(GTK_ENTRY(txt), ""); 
+    gtk_label_set_text(GTK_LABEL(biao.la1),"");
+    gtk_label_set_text(GTK_LABEL(biao.la2),"");
+    gtk_label_set_text(GTK_LABEL(biao.la3),"");
+    gtk_label_set_text(GTK_LABEL(biao.la4),"");
+    gtk_label_set_text(GTK_LABEL(biao.la5),"");
+    gtk_label_set_text(GTK_LABEL(biao.la6),"");
+    gtk_label_set_text(GTK_LABEL(biao.la7),"");
+    gtk_label_set_text(GTK_LABEL(biao.la8),"");} 
 //身份证号查询窗口
 void  chazhao1( GtkWidget *button1)
 {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_window_set_title(GTK_WINDOW(window), "档案查询系统");  
-    gtk_widget_set_size_request(window, 820,600);  
+    gtk_widget_set_size_request(window, 820,300);  
     GtkWidget *fixed;
     fixed =gtk_fixed_new();
     txt=gtk_entry_new();
@@ -535,6 +591,7 @@ void  chazhao1( GtkWidget *button1)
     GtkWidget *butt6;
     GtkWidget *butt7;
     GtkWidget *butt8;
+    GtkWidget *butt9;
     
     butt=gtk_button_new_with_label("查找");
     butt1=gtk_button_new_with_label("姓名");
@@ -545,6 +602,7 @@ void  chazhao1( GtkWidget *button1)
     butt6=gtk_button_new_with_label("身份证");
     butt7=gtk_button_new_with_label("专业");
     butt8=gtk_button_new_with_label("寝室");
+    butt9=gtk_button_new_with_label("清除");
     biao.la1=gtk_label_new("");
     biao.la2=gtk_label_new("");
     biao.la3=gtk_label_new("");
@@ -556,9 +614,7 @@ void  chazhao1( GtkWidget *button1)
     la=gtk_label_new("请输入你要查询的身份证");
    
    //设置标签内容 
-    //gtk_label_set_text(GTK_LABEL(biao.la),"请输入查找的身份证");
    
-     
    //设置构件大小 
     gtk_widget_set_size_request(la,180,50);
     gtk_widget_set_size_request(biao.la1,100,50);
@@ -581,6 +637,7 @@ void  chazhao1( GtkWidget *button1)
     gtk_widget_set_size_request(butt6,100,30);
     gtk_widget_set_size_request(butt7,100,30);
     gtk_widget_set_size_request(butt8,100,30);
+    gtk_widget_set_size_request(butt9,100,30);
     gtk_widget_set_size_request(txt,200,30);
    //放入构建 
     gtk_fixed_put(GTK_FIXED(fixed),la,40,40);
@@ -594,6 +651,7 @@ void  chazhao1( GtkWidget *button1)
     gtk_fixed_put(GTK_FIXED(fixed),butt6,510,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt7,610,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt8,710,100);
+    gtk_fixed_put(GTK_FIXED(fixed),butt9,710,250);
     gtk_fixed_put(GTK_FIXED(fixed),biao.la1,10,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao.la2,110,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao.la3,210,150);
@@ -603,19 +661,30 @@ void  chazhao1( GtkWidget *button1)
     gtk_fixed_put(GTK_FIXED(fixed),biao.la7,610,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao.la8,710,150);
     g_signal_connect(butt, "clicked", G_CALLBACK(get_num),NULL);  
+    g_signal_connect(butt9, "clicked", G_CALLBACK(chazhao1_clear),NULL);  
     g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);  
 
     gtk_container_add(GTK_CONTAINER(window),fixed);
     gtk_widget_show_all(window);
 }
-
+//学号清理函数
+void chazhao2_clear(GtkWidget *button9){
+    gtk_entry_set_text(GTK_ENTRY(txt1), ""); 
+    gtk_label_set_text(GTK_LABEL(biao1.la1),"");
+    gtk_label_set_text(GTK_LABEL(biao1.la2),"");
+    gtk_label_set_text(GTK_LABEL(biao1.la3),"");
+    gtk_label_set_text(GTK_LABEL(biao1.la4),"");
+    gtk_label_set_text(GTK_LABEL(biao1.la5),"");
+    gtk_label_set_text(GTK_LABEL(biao1.la6),"");
+    gtk_label_set_text(GTK_LABEL(biao1.la7),"");
+    gtk_label_set_text(GTK_LABEL(biao1.la8),"");} 
 //学号查询窗口
 void  chazhao2( GtkWidget *button2)
 {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_window_set_title(GTK_WINDOW(window), "档案查询系统");  
-    gtk_widget_set_size_request(window, 820,600);  
+    gtk_widget_set_size_request(window, 820,300);  
     GtkWidget *fixed;
     fixed =gtk_fixed_new();
     txt1=gtk_entry_new();
@@ -629,7 +698,9 @@ void  chazhao2( GtkWidget *button2)
     GtkWidget *butt6;
     GtkWidget *butt7;
     GtkWidget *butt8;
+    GtkWidget *butt9;
     
+   //设置标签内容 
     butt=gtk_button_new_with_label("查找");
     butt1=gtk_button_new_with_label("姓名");
     butt2=gtk_button_new_with_label("性别");
@@ -639,6 +710,7 @@ void  chazhao2( GtkWidget *button2)
     butt6=gtk_button_new_with_label("身份证");
     butt7=gtk_button_new_with_label("专业");
     butt8=gtk_button_new_with_label("寝室");
+    butt9=gtk_button_new_with_label("清除");
     biao1.la1=gtk_label_new("");
     biao1.la2=gtk_label_new("");
     biao1.la3=gtk_label_new("");
@@ -648,8 +720,6 @@ void  chazhao2( GtkWidget *button2)
     biao1.la7=gtk_label_new("");
     biao1.la8=gtk_label_new("");
     lb=gtk_label_new("请输入你要查询的学号");
-   //设置标签内容 
-    //gtk_label_set_text(GTK_LABEL(biao.la),"请输入查找的身份证");
    //设置构件大小 
     gtk_widget_set_size_request(lb,180,50);
     gtk_widget_set_size_request(biao1.la1,100,50);
@@ -672,6 +742,7 @@ void  chazhao2( GtkWidget *button2)
     gtk_widget_set_size_request(butt6,100,30);
     gtk_widget_set_size_request(butt7,100,30);
     gtk_widget_set_size_request(butt8,100,30);
+    gtk_widget_set_size_request(butt9,100,30);
     gtk_widget_set_size_request(txt1,200,30);
    //放入构建 
     gtk_fixed_put(GTK_FIXED(fixed),lb,40,40);
@@ -685,6 +756,7 @@ void  chazhao2( GtkWidget *button2)
     gtk_fixed_put(GTK_FIXED(fixed),butt6,510,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt7,610,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt8,710,100);
+    gtk_fixed_put(GTK_FIXED(fixed),butt9,710,250);
     gtk_fixed_put(GTK_FIXED(fixed),biao1.la1,10,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao1.la2,110,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao1.la3,210,150);
@@ -694,18 +766,29 @@ void  chazhao2( GtkWidget *button2)
     gtk_fixed_put(GTK_FIXED(fixed),biao1.la7,610,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao1.la8,710,150);
     g_signal_connect(butt, "clicked", G_CALLBACK(get_school),NULL);  
+    g_signal_connect(butt9, "clicked", G_CALLBACK(chazhao2_clear),NULL);  
     g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);  
 
     gtk_container_add(GTK_CONTAINER(window),fixed);
     gtk_widget_show_all(window);
 }
+void chazhao3_clear(GtkWidget *button9){
+    gtk_entry_set_text(GTK_ENTRY(txt2), ""); 
+    gtk_label_set_text(GTK_LABEL(biao2.la1),"");
+    gtk_label_set_text(GTK_LABEL(biao2.la2),"");
+    gtk_label_set_text(GTK_LABEL(biao2.la3),"");
+    gtk_label_set_text(GTK_LABEL(biao2.la4),"");
+    gtk_label_set_text(GTK_LABEL(biao2.la5),"");
+    gtk_label_set_text(GTK_LABEL(biao2.la6),"");
+    gtk_label_set_text(GTK_LABEL(biao2.la7),"");
+    gtk_label_set_text(GTK_LABEL(biao2.la8),"");} 
 //电话查询窗口
 void  chazhao3( GtkWidget *button3)
 {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_window_set_title(GTK_WINDOW(window), "档案查询系统");  
-    gtk_widget_set_size_request(window, 820,600);  
+    gtk_widget_set_size_request(window, 820,300);  
     GtkWidget *fixed;
     fixed =gtk_fixed_new();
     txt2=gtk_entry_new();
@@ -719,7 +802,9 @@ void  chazhao3( GtkWidget *button3)
     GtkWidget *butt6;
     GtkWidget *butt7;
     GtkWidget *butt8;
+    GtkWidget *butt9;
     
+   //设置标签内容 
     butt=gtk_button_new_with_label("查找");
     butt1=gtk_button_new_with_label("姓名");
     butt2=gtk_button_new_with_label("性别");
@@ -729,6 +814,7 @@ void  chazhao3( GtkWidget *button3)
     butt6=gtk_button_new_with_label("身份证");
     butt7=gtk_button_new_with_label("专业");
     butt8=gtk_button_new_with_label("寝室");
+    butt9=gtk_button_new_with_label("清理");
     biao2.la1=gtk_label_new("");
     biao2.la2=gtk_label_new("");
     biao2.la3=gtk_label_new("");
@@ -738,9 +824,6 @@ void  chazhao3( GtkWidget *button3)
     biao2.la7=gtk_label_new("");
     biao2.la8=gtk_label_new("");
     lc=gtk_label_new("请输入你要查询的电话");
-   
-   //设置标签内容 
-    //gtk_label_set_text(GTK_LABEL(biao.la),"请输入查找的身份证");
      
    //设置构件大小 
     gtk_widget_set_size_request(lc,180,50);
@@ -763,6 +846,7 @@ void  chazhao3( GtkWidget *button3)
     gtk_widget_set_size_request(butt6,100,30);
     gtk_widget_set_size_request(butt7,100,30);
     gtk_widget_set_size_request(butt8,100,30);
+    gtk_widget_set_size_request(butt9,100,30);
     gtk_widget_set_size_request(txt2,200,30);
    //放入构建 
     gtk_fixed_put(GTK_FIXED(fixed),lc,40,40);
@@ -776,6 +860,7 @@ void  chazhao3( GtkWidget *button3)
     gtk_fixed_put(GTK_FIXED(fixed),butt6,510,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt7,610,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt8,710,100);
+    gtk_fixed_put(GTK_FIXED(fixed),butt9,710,250);
     gtk_fixed_put(GTK_FIXED(fixed),biao2.la1,10,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao2.la2,110,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao2.la3,210,150);
@@ -785,129 +870,344 @@ void  chazhao3( GtkWidget *button3)
     gtk_fixed_put(GTK_FIXED(fixed),biao2.la7,610,150);
     gtk_fixed_put(GTK_FIXED(fixed),biao2.la8,710,150);
     g_signal_connect(butt, "clicked", G_CALLBACK(get_tel),NULL);  
+    g_signal_connect(butt9, "clicked", G_CALLBACK(chazhao3_clear),NULL);  
     g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);  
 
     gtk_container_add(GTK_CONTAINER(window),fixed);
     gtk_widget_show_all(window);
 }
 
-     
-void xianshi(GtkWidget *button6)
-{
-    GtkWidget *window;
-    GtkWidget *textview;
-    GtkTextBuffer *buffer;
+void chazhao4(GtkWidget *button4){
+    //char *bb[8];
+    GtkWidget *window;//窗口和按键的对应指针
+    GtkWidget *clist;
     GtkWidget *fixed;
-    GtkWidget *notebook;
-    gchar buf[600]="\0";
-    node *p;
-    p=stu->head;
-    if(p==NULL)
-	return ;
-    show_info();
-    window=gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    //3.设置窗口标题  
-    gtk_window_set_title(GTK_WINDOW(window), "学生信息显示");  
-    //4.窗口在显示器中居中显示  
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);  
-    //5.设置窗口最小大小  
-    gtk_widget_set_size_request(window,600,400);  
-    fixed=gtk_fixed_new();
     GtkWidget *label;
-    notebook =gtk_notebook_new();
-   // while(p!=NULL){
-    sprintf(buf,"%-12s%-8s%-10s%-15s%-20s%-25s%-12s%-8s\n",p->name,p->sex,p->class,p->school,p->tel,p->num,p->zhuanye,p->dor);
-   // p=p->next;} 
-    label=gtk_label_new("显示所有信息"); 
-    textview = gtk_text_view_new();
-    buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
-    gtk_widget_show(textview);
-    gtk_text_buffer_set_text(buffer, buf, -1);
-    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), textview, label);
-    //gtk_widget_set_size_request(label,100,100);
-    gtk_widget_set_size_request(notebook,300,300);
-   // gtk_fixed_put(GTK_FIXED(fixed),label,50,20);
-    gtk_fixed_put(GTK_FIXED(fixed),notebook,20,40);
-    gtk_container_add(GTK_CONTAINER(window),fixed);
-    gtk_widget_show_all(window);
+    GtkWidget *bu;
+    GtkWidget *bu1;
+    bu=gtk_button_new_with_label("查找");
+    bu1=gtk_button_new_with_label("清除");
+    label=gtk_label_new("请输入信息:");
+    char title[] = "学生信息";
+    fixed=gtk_fixed_new();
+    txt5=gtk_entry_new();
+    gtk_entry_set_text(GTK_ENTRY(txt5), ""); 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);//创建窗口
+    gtk_window_set_title(GTK_WINDOW(window),title);//设置窗口标题
+    gtk_widget_set_size_request(window, 800,600);  
+    gtk_widget_set_size_request(txt5, 300,30);  
+    gtk_widget_set_size_request(label, 100,30);  
+    gtk_widget_set_size_request(bu, 80,30);  
+    gtk_widget_set_size_request(bu1, 80,30);  
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);//窗口居中
+    gtk_signal_connect(GTK_OBJECT(window),"delete_event",G_CALLBACK(gtk_main_quit),NULL);
+  
+    clist = gtk_clist_new(8);//创建表格
+    gtk_widget_set_size_request(clist, 800,500);  
+    gtk_fixed_put(GTK_FIXED(fixed),clist,0,100);
+    gtk_fixed_put(GTK_FIXED(fixed),txt5,150,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu,500,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu1,600,30);
+    gtk_fixed_put(GTK_FIXED(fixed),label,50,30);
+    gtk_clist_set_column_title(GTK_CLIST(clist),0,"       姓名       ");//添加列标题
+    gtk_clist_set_column_title(GTK_CLIST(clist),1,"        性别       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),2,"        班级       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),3,"        学号           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),4,"        电话           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),5,"        身份证           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),6,"           专业            ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),7,"          宿舍         ");
+    
+    gtk_clist_column_titles_show(GTK_CLIST(clist));//显示列标题
+    gtk_container_add(GTK_CONTAINER(window),fixed);//将标签盒加入窗口
+    g_signal_connect(bu, "clicked", G_CALLBACK(get_name), clist);
+    g_signal_connect(bu1, "clicked", G_CALLBACK(get_name_clear), clist);
+    g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_widget_show_all(window);//显示窗口
+    gtk_main();
+     } 
+//按照名字查找
+void get_name(GtkWidget *bu,GtkWidget *clist){
+    char *bb[8];
+    row=0;
+    node *p=NULL;
+    p=(node*)malloc(sizeof(node));
+    p=stu->head;
+    for(;p!=NULL;p=p->next){
+    if(strcmp(p->name,gtk_entry_get_text(GTK_ENTRY(txt5)))==0){
+	bb[0]=p->name;
+	bb[1]=p->sex;
+	bb[2]=p->class;
+	bb[3]=p->school;
+	bb[4]=p->tel;
+	bb[5]=p->num;
+	bb[6]=p->zhuanye;
+	bb[7]=p->dor;
+	row++;
+        gtk_clist_append(GTK_CLIST(clist),(gchar**)(bb));}  //对cilst列表 构建 进行从无到有到数据填充
+	}}  
+
+//清除查找的姓名
+void get_name_clear(GtkWidget *bu1,GtkWidget *clist){
+    for(int a=0;a<=row+1;a++)
+    gtk_clist_remove(GTK_CLIST(clist),a);
+}
+//查找班级函数
+void chazhao5(GtkWidget *button5){
+    GtkWidget *window;//窗口和按键的对应指针
+    GtkWidget *clist;
+    GtkWidget *fixed;
+    GtkWidget *label;
+    GtkWidget *bu;
+    GtkWidget *bu1;
+    bu=gtk_button_new_with_label("查找");
+    bu1=gtk_button_new_with_label("清除");
+    label=gtk_label_new("请输入信息:");
+    char title[] = "学生信息";
+    fixed=gtk_fixed_new();
+    txt6=gtk_entry_new();
+    gtk_entry_set_text(GTK_ENTRY(txt6), ""); 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);//创建窗口
+    gtk_window_set_title(GTK_WINDOW(window),title);//设置窗口标题
+    gtk_widget_set_size_request(window, 800,600);  
+    gtk_widget_set_size_request(txt6, 300,30);  
+    gtk_widget_set_size_request(label, 100,30);  
+    gtk_widget_set_size_request(bu, 80,30);  
+    gtk_widget_set_size_request(bu1, 80,30);  
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);//窗口居中
+    gtk_signal_connect(GTK_OBJECT(window),"delete_event",G_CALLBACK(gtk_main_quit),NULL);
+  
+    clist = gtk_clist_new(8);//创建表格
+    gtk_widget_set_size_request(clist, 800,500);  
+    gtk_fixed_put(GTK_FIXED(fixed),clist,0,100);
+    gtk_fixed_put(GTK_FIXED(fixed),txt6,150,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu,500,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu1,600,30);
+    gtk_fixed_put(GTK_FIXED(fixed),label,50,30);
+    gtk_clist_set_column_title(GTK_CLIST(clist),0,"       姓名       ");//添加列标题
+    gtk_clist_set_column_title(GTK_CLIST(clist),1,"        性别       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),2,"        班级       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),3,"        学号           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),4,"        电话           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),5,"        身份证           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),6,"           专业            ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),7,"          宿舍         ");
+    
+    gtk_clist_column_titles_show(GTK_CLIST(clist));//显示列标题
+    gtk_container_add(GTK_CONTAINER(window),fixed);//将标签盒加入窗口
+    g_signal_connect(bu, "clicked", G_CALLBACK(get_class), clist);
+    g_signal_connect(bu1, "clicked", G_CALLBACK(get_name_clear), clist);
+    g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_widget_show_all(window);//显示窗口
+    gtk_main();
+}  
+void get_class(GtkWidget *bu,GtkWidget *clist){
+    char *bb[8];
+    row=0;
+    node *p=NULL;
+    p=(node*)malloc(sizeof(node));
+    p=stu->head;
+    for(;p!=NULL;p=p->next){
+    if(strcmp(p->class,gtk_entry_get_text(GTK_ENTRY(txt6)))==0){
+	bb[0]=p->name;
+	bb[1]=p->sex;
+	bb[2]=p->class;
+	bb[3]=p->school;
+	bb[4]=p->tel;
+	bb[5]=p->num;
+	bb[6]=p->zhuanye;
+	bb[7]=p->dor;
+	row++;
+        gtk_clist_append(GTK_CLIST(clist),(gchar**)(bb));}  //对cilst列表 构建 进行从无到有到数据填充
+	} 
+}
+//清除查找的姓名
+
+void chazhao6(GtkWidget *button6){
+    GtkWidget *window;//窗口和按键的对应指针
+    GtkWidget *clist;
+    GtkWidget *fixed;
+    GtkWidget *label;
+    GtkWidget *bu;
+    GtkWidget *bu1;
+    bu=gtk_button_new_with_label("查找");
+    bu1=gtk_button_new_with_label("清除");
+    label=gtk_label_new("请输入信息:");
+    char title[] = "学生信息";
+    fixed=gtk_fixed_new();
+    txt7=gtk_entry_new();
+    gtk_entry_set_text(GTK_ENTRY(txt7),""); 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);//创建窗口
+    gtk_window_set_title(GTK_WINDOW(window),title);//设置窗口标题
+    gtk_widget_set_size_request(window, 800,600);  
+    gtk_widget_set_size_request(txt7, 150,30);  
+    gtk_widget_set_size_request(label, 100,30);  
+    gtk_widget_set_size_request(bu, 80,30);  
+    gtk_widget_set_size_request(bu1, 80,30);  
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);//窗口居中
+    gtk_signal_connect(GTK_OBJECT(window),"delete_event",G_CALLBACK(gtk_main_quit),NULL);
+  
+    clist = gtk_clist_new(8);//创建表格
+    gtk_widget_set_size_request(clist, 800,500);  
+    gtk_fixed_put(GTK_FIXED(fixed),clist,0,100);
+    gtk_fixed_put(GTK_FIXED(fixed),txt7,150,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu,500,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu1,600,30);
+    gtk_fixed_put(GTK_FIXED(fixed),label,50,30);
+    gtk_clist_set_column_title(GTK_CLIST(clist),0,"       姓名       ");//添加列标题
+    gtk_clist_set_column_title(GTK_CLIST(clist),1,"        性别       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),2,"        班级       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),3,"        学号           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),4,"        电话           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),5,"        身份证           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),6,"           专业            ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),7,"          宿舍         ");
+    
+    gtk_clist_column_titles_show(GTK_CLIST(clist));//显示列标题
+    gtk_container_add(GTK_CONTAINER(window),fixed);//将标签盒加入窗口
+    g_signal_connect(bu, "clicked", G_CALLBACK(get_zhuanye), clist);
+    g_signal_connect(bu1, "clicked", G_CALLBACK(get_name_clear), clist);
+    g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_widget_show_all(window);//显示窗口
+    gtk_main();
+     } 
+
+void get_zhuanye(GtkWidget *bu,GtkWidget *clist){
+    char *bb[8];
+    row=0;
+    node *p=NULL;
+    p=(node*)malloc(sizeof(node));
+    p=stu->head;
+    for(;p!=NULL;p=p->next){
+    if(strcmp(p->zhuanye,gtk_entry_get_text(GTK_ENTRY(txt7)))==0){
+	bb[0]=p->name;
+	bb[1]=p->sex;
+	bb[2]=p->class;
+	bb[3]=p->school;
+	bb[4]=p->tel;
+	bb[5]=p->num;
+	bb[6]=p->zhuanye;
+	bb[7]=p->dor;
+	row++;
+        gtk_clist_append(GTK_CLIST(clist),(gchar**)(bb));}  //对cilst列表 构建 进行从无到有到数据填充
+	} 
 }
 
-void  shi( GtkWidget *button6)
-{
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_title(GTK_WINDOW(window), "档案查询系统");  
-    gtk_widget_set_size_request(window, 820,600);  
+void chazhao7(GtkWidget *button7){
+    GtkWidget *window;//窗口和按键的对应指针
+    GtkWidget *clist;
     GtkWidget *fixed;
-    fixed =gtk_fixed_new();
-    GtkWidget *butt1;
-    GtkWidget *butt2;
-    GtkWidget *butt3;
-    GtkWidget *butt4;
-    GtkWidget *butt5;
-    GtkWidget *butt6;
-    GtkWidget *butt7;
-    GtkWidget *butt8;
+    GtkWidget *label;
+    GtkWidget *bu;
+    GtkWidget *bu1;
+    bu=gtk_button_new_with_label("查找");
+    bu1=gtk_button_new_with_label("清除");
+    label=gtk_label_new("请输入信息:");
+    char title[] = "学生信息";
+    fixed=gtk_fixed_new();
+    txt8=gtk_entry_new();
+    gtk_entry_set_text(GTK_ENTRY(txt8),""); 
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);//创建窗口
+    gtk_window_set_title(GTK_WINDOW(window),title);//设置窗口标题
+    gtk_widget_set_size_request(window, 800,600);  
+    gtk_widget_set_size_request(txt8, 150,30);  
+    gtk_widget_set_size_request(label, 100,30);  
+    gtk_widget_set_size_request(bu, 80,30);  
+    gtk_widget_set_size_request(bu1, 80,30);  
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);//窗口居中
+    gtk_signal_connect(GTK_OBJECT(window),"delete_event",G_CALLBACK(gtk_main_quit),NULL);
+  
+    clist = gtk_clist_new(8);//创建表格
+    gtk_widget_set_size_request(clist, 800,500);  
+    gtk_fixed_put(GTK_FIXED(fixed),clist,0,100);
+    gtk_fixed_put(GTK_FIXED(fixed),txt8,150,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu,500,30);
+    gtk_fixed_put(GTK_FIXED(fixed),bu1,600,30);
+    gtk_fixed_put(GTK_FIXED(fixed),label,50,30);
+    gtk_clist_set_column_title(GTK_CLIST(clist),0,"       姓名       ");//添加列标题
+    gtk_clist_set_column_title(GTK_CLIST(clist),1,"        性别       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),2,"        班级       ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),3,"        学号           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),4,"        电话           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),5,"        身份证           ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),6,"           专业            ");
+    gtk_clist_set_column_title(GTK_CLIST(clist),7,"          宿舍         ");
     
-    butt1=gtk_button_new_with_label("姓名");
-    butt2=gtk_button_new_with_label("性别");
-    butt3=gtk_button_new_with_label("班级");
-    butt4=gtk_button_new_with_label("学号");
-    butt5=gtk_button_new_with_label("电话");
-    butt6=gtk_button_new_with_label("身份证");
-    butt7=gtk_button_new_with_label("专业");
-    butt8=gtk_button_new_with_label("寝室");
-    biao1.la1=gtk_label_new("");
-    biao1.la2=gtk_label_new("");
-    biao1.la3=gtk_label_new("");
-    biao1.la4=gtk_label_new("");
-    biao1.la5=gtk_label_new("");
-    biao1.la6=gtk_label_new("");
-    biao1.la7=gtk_label_new("");
-    biao1.la8=gtk_label_new("");
-   //设置标签内容 
-   //设置构件大小 
-    gtk_widget_set_size_request(biao1.la1,100,50);
-    gtk_widget_set_size_request(biao1.la2,100,50);
-    gtk_widget_set_size_request(biao1.la3,100,50);
-    gtk_widget_set_size_request(biao1.la4,100,50);
-    gtk_widget_set_size_request(biao1.la5,100,50);
-    gtk_widget_set_size_request(biao1.la6,100,50);
-    gtk_widget_set_size_request(biao1.la7,100,50);
-    gtk_widget_set_size_request(biao1.la8,100,50);
-   
-   //设置回调函数 
+    gtk_clist_column_titles_show(GTK_CLIST(clist));//显示列标题
+    gtk_container_add(GTK_CONTAINER(window),fixed);//将标签盒加入窗口
+    g_signal_connect(bu, "clicked", G_CALLBACK(get_dor), clist);
+    g_signal_connect(bu1, "clicked", G_CALLBACK(get_name_clear), clist);
+    g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);
+    gtk_widget_show_all(window);//显示窗口
+    gtk_main();
+     } 
 
-    gtk_widget_set_size_request(butt1,100,30);
-    gtk_widget_set_size_request(butt2,100,30);
-    gtk_widget_set_size_request(butt3,100,30);
-    gtk_widget_set_size_request(butt4,100,30);
-    gtk_widget_set_size_request(butt5,100,30);
-    gtk_widget_set_size_request(butt6,100,30);
-    gtk_widget_set_size_request(butt7,100,30);
-    gtk_widget_set_size_request(butt8,100,30);
-   //放入构建 
-    gtk_fixed_put(GTK_FIXED(fixed),butt1,10,10);
-    gtk_fixed_put(GTK_FIXED(fixed),butt2,110,10);
-    gtk_fixed_put(GTK_FIXED(fixed),butt3,210,10);
-    gtk_fixed_put(GTK_FIXED(fixed),butt4,310,10);
-    gtk_fixed_put(GTK_FIXED(fixed),butt5,410,10);
-    gtk_fixed_put(GTK_FIXED(fixed),butt6,510,10);
-    gtk_fixed_put(GTK_FIXED(fixed),butt7,610,10);
-    gtk_fixed_put(GTK_FIXED(fixed),butt8,710,10);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la1,10,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la2,110,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la3,210,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la4,310,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la5,410,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la6,510,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la7,610,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao4.la8,710,150);
-    g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);  
 
-    gtk_container_add(GTK_CONTAINER(window),fixed);
-    gtk_widget_show_all(window);
-} 
+void get_dor(GtkWidget *bu,GtkWidget *clist){
+    char *bb[8];
+    row=0;
+    node *p=NULL;
+    p=(node*)malloc(sizeof(node));
+    p=stu->head;
+    for(;p!=NULL;p=p->next){
+    if(strcmp(p->dor,gtk_entry_get_text(GTK_ENTRY(txt8)))==0){
+	bb[0]=p->name;
+	bb[1]=p->sex;
+	bb[2]=p->class;
+	bb[3]=p->school;
+	bb[4]=p->tel;
+	bb[5]=p->num;
+	bb[6]=p->zhuanye;
+	bb[7]=p->dor;
+	row++;
+        gtk_clist_append(GTK_CLIST(clist),(gchar**)(bb));}  //对cilst列表 构建 进行从无到有到数据填充
+	} 
+}
+void xianshi(GtkWidget *button6){
+    char *cc[8];
+    int n=0;
+    GtkWidget *window;//窗口和按键的对应指针
+    GtkWidget *alist;
+   // GtkWidget *scrolled;
+    //gtk_container_add(GTK_CONTAINER(window),scrolled);
+    char title[] = "学生信息";
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);//创建窗口
+    gtk_window_set_title(GTK_WINDOW(window),title);//设置窗口标题
+    gtk_widget_set_size_request(window, 800,600);  
+     
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);//窗口居中
+    gtk_signal_connect(GTK_OBJECT(window),"delete_event",G_CALLBACK(gtk_main_quit),NULL);
+    //gtk_container_add(GTK_CONTAINER(window),scrolled);
+  
+    alist = gtk_clist_new(8);//创建表格
+    gtk_clist_set_column_title(GTK_CLIST(alist),0,"       姓名       ");//添加列标题
+    gtk_clist_set_column_title(GTK_CLIST(alist),1,"        性别       ");
+    gtk_clist_set_column_title(GTK_CLIST(alist),2,"        班级       ");
+    gtk_clist_set_column_title(GTK_CLIST(alist),3,"        学号           ");
+    gtk_clist_set_column_title(GTK_CLIST(alist),4,"        电话           ");
+    gtk_clist_set_column_title(GTK_CLIST(alist),5,"        身份证                  ");
+    gtk_clist_set_column_title(GTK_CLIST(alist),6,"         专业            ");
+    gtk_clist_set_column_title(GTK_CLIST(alist),7,"          宿舍         ");
+    node *p=NULL;
+    p=(node*)malloc(sizeof(node));
+    p=stu->head;
+    while(p!=NULL){
+	cc[0]=p->name;
+	cc[1]=p->sex;
+	cc[2]=p->class;
+	cc[3]=p->school;
+	cc[4]=p->tel;
+	cc[5]=p->num;
+	cc[6]=p->zhuanye;
+	cc[7]=p->dor;
+        gtk_clist_append(GTK_CLIST(alist),(gchar**)(cc) ); //对cilst列表 构建 进行从无到有到数据填充
+	p=p->next;} 
+    gtk_clist_column_titles_show(GTK_CLIST(alist));//显示列标题
+    gtk_container_add(GTK_CONTAINER(window),alist);//将标签盒加入窗口
+    gtk_widget_show(alist);//显示表格
+    gtk_widget_show(window);//显示窗口
+    gtk_main();
+     } 
 
 //修改姓名函数
 void input_name(GtkWidget *button)
@@ -922,7 +1222,7 @@ void input_name(GtkWidget *button)
 	g_print("p=NULL");
 	return;}
     g_print("N=%d",N);
-    for(int i=0;i<N;i++)
+    for( i=0;i<N;i++)
 	p=p->next;
     strcpy(p->name,b);
     gtk_label_set_text(GTK_LABEL(biao4.la1),p->name);
@@ -947,7 +1247,7 @@ void input_class(GtkWidget *button)
 	g_print("p=NULL");
 	return;}
     g_print("N=%d",N);
-    for(int i=0;i<N;i++)
+    for(i=0;i<N;i++)
 	p=p->next;
     strcpy(p->class,b);
     gtk_label_set_text(GTK_LABEL(biao4.la1),p->name);
@@ -959,6 +1259,7 @@ void input_class(GtkWidget *button)
     gtk_label_set_text(GTK_LABEL(biao4.la7),p->zhuanye);
     gtk_label_set_text(GTK_LABEL(biao4.la8),p->dor);
 }
+
 //修改学号函数
 void input_school(GtkWidget *button)
 {
@@ -972,7 +1273,7 @@ void input_school(GtkWidget *button)
 	g_print("p=NULL");
 	return;}
     g_print("N=%d",N);
-    for(int i=0;i<N;i++)
+    for(i=0;i<N;i++)
 	p=p->next;
     strcpy(p->school,b);
     gtk_label_set_text(GTK_LABEL(biao4.la1),p->name);
@@ -997,7 +1298,7 @@ void input_tel(GtkWidget *button)
 	g_print("p=NULL");
 	return;}
     g_print("N=%d",N);
-    for(int i=0;i<N;i++)
+    for(i=0;i<N;i++)
 	p=p->next;
     strcpy(p->tel,b);
     gtk_label_set_text(GTK_LABEL(biao4.la1),p->name);
@@ -1022,7 +1323,7 @@ void input_num(GtkWidget *button)
 	g_print("p=NULL");
 	return;}
     g_print("N=%d",N);
-    for(int i=0;i<N;i++)
+    for( i=0;i<N;i++)
 	p=p->next;
     strcpy(p->num,b);
     gtk_label_set_text(GTK_LABEL(biao4.la1),p->name);
@@ -1284,6 +1585,10 @@ void change_info(GtkWidget *butto4)
     fixed =gtk_fixed_new();
     txt3=gtk_entry_new();
     gtk_entry_set_text(GTK_ENTRY(txt3), ""); 
+    GtkWidget *image;
+    image=gtk_image_new_from_file("zhi.jpg");
+    gtk_widget_set_size_request(image, 820,600);  
+    gtk_container_add(GTK_CONTAINER(fixed),image);
    //设置标签 
     GtkWidget *label;
     //设置按钮
@@ -1448,11 +1753,17 @@ void  delete_info( GtkWidget *button4)
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_window_set_title(GTK_WINDOW(window), "学生信息删除系统");  
-    gtk_widget_set_size_request(window, 820,600);  
+    gtk_widget_set_size_request(window, 820,300);  
     GtkWidget *fixed;
     fixed =gtk_fixed_new();
     txt4=gtk_entry_new();
     gtk_entry_set_text(GTK_ENTRY(txt4), ""); 
+
+    GtkWidget *image;
+    image=gtk_image_new_from_file("zhi.jpg");
+    gtk_widget_set_size_request(image, 820,300);  
+    gtk_container_add(GTK_CONTAINER(fixed),image);
+
     GtkWidget *butt;
     GtkWidget *butt1;
     GtkWidget *butt2;
@@ -1474,14 +1785,14 @@ void  delete_info( GtkWidget *button4)
     butt7=gtk_button_new_with_label("专业");
     butt8=gtk_button_new_with_label("寝室");
     butt9=gtk_button_new_with_label("确认删除");
-    biao2.la1=gtk_label_new("");
-    biao2.la2=gtk_label_new("");
-    biao2.la3=gtk_label_new("");
-    biao2.la4=gtk_label_new("");
-    biao2.la5=gtk_label_new("");
-    biao2.la6=gtk_label_new("");
-    biao2.la7=gtk_label_new("");
-    biao2.la8=gtk_label_new("");
+    biao5.la1=gtk_label_new("");
+    biao5.la2=gtk_label_new("");
+    biao5.la3=gtk_label_new("");
+    biao5.la4=gtk_label_new("");
+    biao5.la5=gtk_label_new("");
+    biao5.la6=gtk_label_new("");
+    biao5.la7=gtk_label_new("");
+    biao5.la8=gtk_label_new("");
     lc=gtk_label_new("请输入你要删除的学号");
    
    //设置标签内容 
@@ -1489,14 +1800,14 @@ void  delete_info( GtkWidget *button4)
      
    //设置构件大小 
     gtk_widget_set_size_request(lc,180,50);
-    gtk_widget_set_size_request(biao2.la1,100,50);
-    gtk_widget_set_size_request(biao2.la2,100,50);
-    gtk_widget_set_size_request(biao2.la3,100,50);
-    gtk_widget_set_size_request(biao2.la4,100,50);
-    gtk_widget_set_size_request(biao2.la5,100,50);
-    gtk_widget_set_size_request(biao2.la6,100,50);
-    gtk_widget_set_size_request(biao2.la7,100,50);
-    gtk_widget_set_size_request(biao2.la8,100,50);
+    gtk_widget_set_size_request(biao5.la1,100,50);
+    gtk_widget_set_size_request(biao5.la2,100,50);
+    gtk_widget_set_size_request(biao5.la3,100,50);
+    gtk_widget_set_size_request(biao5.la4,100,50);
+    gtk_widget_set_size_request(biao5.la5,100,50);
+    gtk_widget_set_size_request(biao5.la6,100,50);
+    gtk_widget_set_size_request(biao5.la7,100,50);
+    gtk_widget_set_size_request(biao5.la8,100,50);
    
 
     gtk_widget_set_size_request(butt,100,30);
@@ -1508,7 +1819,7 @@ void  delete_info( GtkWidget *button4)
     gtk_widget_set_size_request(butt6,100,30);
     gtk_widget_set_size_request(butt7,100,30);
     gtk_widget_set_size_request(butt8,100,30);
-    gtk_widget_set_size_request(butt8,100,30);
+    gtk_widget_set_size_request(butt9,100,30);
     //gtk_widget_set_size_request(txt2,200,30);
    //放入构建 
     gtk_fixed_put(GTK_FIXED(fixed),lc,40,40);
@@ -1522,16 +1833,18 @@ void  delete_info( GtkWidget *button4)
     gtk_fixed_put(GTK_FIXED(fixed),butt6,510,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt7,610,100);
     gtk_fixed_put(GTK_FIXED(fixed),butt8,710,100);
-    gtk_fixed_put(GTK_FIXED(fixed),butt9,390,400);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la1,10,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la2,110,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la3,210,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la4,310,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la5,410,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la6,510,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la7,610,150);
-    gtk_fixed_put(GTK_FIXED(fixed),biao2.la8,710,150);
-    g_signal_connect(butt, "clicked", G_CALLBACK(get_tel),NULL);  
+    gtk_fixed_put(GTK_FIXED(fixed),butt9,390,250);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la1,10,150);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la2,110,150);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la3,210,150);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la4,310,150);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la5,410,150);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la6,510,150);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la7,610,150);
+    gtk_fixed_put(GTK_FIXED(fixed),biao5.la8,710,150);
+    g_signal_connect(butt, "clicked", G_CALLBACK(delete_search),NULL);  
+    g_signal_connect(butt9, "clicked", G_CALLBACK(delete_informat),NULL);  
+    g_signal_connect(butt9, "clicked", G_CALLBACK(delete_dia),window);  
     g_signal_connect(fixed, "delete_event", G_CALLBACK(gtk_main_quit), NULL);  
 
     gtk_container_add(GTK_CONTAINER(window),fixed);
@@ -1540,25 +1853,11 @@ void  delete_info( GtkWidget *button4)
 
      
 
-/*void delete_info(GtkWidget *butt4){
-
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
-    //3.设置窗口标题  
-    gtk_window_set_title(GTK_WINDOW(window), "档案管理系统");  
-    //4.窗口在显示器中居中显示  
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);  
-    //5.设置窗口最小大小  
-    gtk_widget_set_size_request(window, 800,600);  
-    //6.固定窗口大小  
-    gtk_window_set_resizable(GTK_WINDOW(window), TRUE); 
-    gtk_widget_show_all(window);  
-    gtk_main();
-}*/
 void menu(void)  
 {  
-    //1.gtk环境初始化  
-    //linklist l;
-    //2.创建一个窗口  
+    //2.创建一个窗口 
+
+
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
     GtkWidget *fixed;
     GtkWidget *button;
@@ -1570,12 +1869,24 @@ void menu(void)
     GtkWidget *button6;
     GtkWidget *button7;
     GtkWidget *button8;
-
     fixed=gtk_fixed_new();
-    //table =gtk_table_new(8,1,FALSE);
+    GtkWidget *image;
+    image=gtk_image_new_from_file("3.jpg");
+    gtk_widget_set_size_request(image, 800,600);  
+    gtk_container_add(GTK_CONTAINER(fixed),image);
+    gtk_window_set_decorated(GTK_WINDOW(window), FALSE);       // 设置无边框   
+    gtk_widget_set_app_paintable(window, TRUE); 
+
+        //5.通过GdkPixbuf来写该图片大小
+        //5.1创建pixbuf，需要占用资源，使用完需要释放
+       /* GdkPixbuf *src = gdk_pixbuf_new_from_file("./img/2.png", NULL);
+        //5.2修改图片大小
+        GdkPixbuf *dst = gdk_pixbuf_scale_simple(src,100,100,GDK_INTERP_BILINEAR);
+        GtkWidget *image_two = gtk_image_new_from_pixbuf(dst);
+        //5.3pixbuf使用完需要释放其中资源
+        g_object_unref(src);
+        g_object_unref(dst);*/
     gtk_container_add(GTK_CONTAINER(window),fixed);
-//    gtk_table_set_row_spacings(GTK_TABLE(table), 8);
- //   gtk_table_set_col_spacings(GTK_TABLE(table), 8);
     //3.设置窗口标题  
     gtk_window_set_title(GTK_WINDOW(window), "档案管理系统");  
     //4.窗口在显示器中居中显示  
@@ -1594,6 +1905,17 @@ void menu(void)
     button6=gtk_button_new_with_label("保存学生信息");
     button7=gtk_button_new_with_label("显示学生信息");
     button8=gtk_button_new_with_label("退出系统");
+
+
+    gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button1), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button2), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button3), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(butto4), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button5), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button6), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button7), GTK_RELIEF_NONE);
+    gtk_button_set_relief(GTK_BUTTON(button8), GTK_RELIEF_NONE);
     //设置按钮大小 
     gtk_widget_set_size_request(button,300,50);
     gtk_widget_set_size_request(button1,200,50);
@@ -1614,6 +1936,7 @@ void menu(void)
     gtk_fixed_put(GTK_FIXED(fixed),button6,300,410);
     gtk_fixed_put(GTK_FIXED(fixed),button7,300,475);
     gtk_fixed_put(GTK_FIXED(fixed),button8,300,540);
+    //gtk_fixed_put(GTK_FIXED(fixed),image_one,0,0);
     //添加按钮
   
     //7."destroy"与gtk_main_quit链接  
@@ -1622,12 +1945,13 @@ void menu(void)
     g_signal_connect(button3, "pressed", G_CALLBACK(change_info), NULL);  
     g_signal_connect(butto4, "clicked", G_CALLBACK(delete_info), NULL);  
     g_signal_connect(button5, "pressed", G_CALLBACK(load_info), NULL);  
+    g_signal_connect(button5, "pressed", G_CALLBACK(load_dia), NULL);  
     g_signal_connect(button7, "pressed", G_CALLBACK(xianshi), NULL);  
     g_signal_connect(button6, "pressed", G_CALLBACK(save_info), NULL);  
+    g_signal_connect(button6, "pressed", G_CALLBACK(save_dia), window);  
     g_signal_connect(button8, "pressed", G_CALLBACK(gtk_main_quit), NULL);  
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);  
     
-//    gtk_container_add(GTK_CONTAINER(window),fixed);
     //8.显示所有窗口  
     gtk_widget_show_all(window);  
   
@@ -1637,7 +1961,7 @@ void menu(void)
     return ;  
 }  
   
-void on_button_clicked (GtkWidget* button,int data)  
+void button_clicked(GtkWidget* button,int data)  
 {  
     /*void gtk_entry_set_text(Gtk_Entry *entry,const gchr  *text) 
      *     将新的内容取代文本输入构件当前的内容。 
@@ -1659,74 +1983,9 @@ void on_button_clicked (GtkWidget* button,int data)
         /*改变文本空的可编辑状态*/  
         gtk_editable_set_editable(GTK_EDITABLE(entry1),GTK_TOGGLE_BUTTON(button)->active);  
         gtk_editable_set_editable(GTK_EDITABLE(entry2),GTK_TOGGLE_BUTTON(button)->active);  
-    }  
+    }
+
 }  
   
-int main(int argc,char* argv[])  
-{  
-    linklist l;
-    stu=initlinklist(&l);
-    GtkWidget* box;  
-    GtkWidget* box1;  
-    GtkWidget* box2;  
-    GtkWidget* box3;  
-    GtkWidget* label1;  
-    GtkWidget* label2;  
-    GtkWidget* button;  
-    GtkWidget* sep;  
-    //初始化  
-    gtk_init(&argc,&argv);  
-    //设置窗口  
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);  
-    g_signal_connect(G_OBJECT(window),"destroy",G_CALLBACK(gtk_main_quit),NULL);  
-    gtk_window_set_title(GTK_WINDOW(window),"登录窗口");  
-    gtk_window_set_position(GTK_WINDOW(window),GTK_WIN_POS_CENTER);  
-    gtk_container_set_border_width(GTK_CONTAINER(window),20);  
-  
-    box = gtk_vbox_new(FALSE,0);  
-    gtk_container_add(GTK_CONTAINER(window),box);  
-    box1 = gtk_hbox_new(FALSE,0);  
-    gtk_box_pack_start(GTK_BOX(box),box1,FALSE,FALSE,5);  
-    box2 = gtk_hbox_new(FALSE,0);  
-    gtk_box_pack_start(GTK_BOX(box),box2,FALSE,FALSE,5);  
-    sep = gtk_hseparator_new();//分割线  
-    gtk_box_pack_start(GTK_BOX(box),sep,FALSE,FALSE,5);  
-    box3 = gtk_hbox_new(FALSE,0);  
-    gtk_box_pack_start(GTK_BOX(box),box3,TRUE,TRUE,5);  
-  
-  
-    label1 = gtk_label_new("用户名：");  
-    entry1 = gtk_entry_new();  
-    gtk_box_pack_start(GTK_BOX(box1),label1,FALSE,FALSE,5);  
-    gtk_box_pack_start(GTK_BOX(box1),entry1,FALSE,FALSE,5);  
-  
-    label2 = gtk_label_new("密    码：");  
-    entry2 = gtk_entry_new();  
-    /*设置输入文本不可见*/  
-    gtk_entry_set_visibility(GTK_ENTRY(entry2),FALSE);  
-    gtk_box_pack_start(GTK_BOX(box2),label2,FALSE,FALSE,5);  
-    gtk_box_pack_start(GTK_BOX(box2),entry2,FALSE,FALSE,5);  
-  
-    button = gtk_check_button_new_with_label("Editable");  
-    g_signal_connect(G_OBJECT(button),"clicked",G_CALLBACK(on_button_clicked),(gpointer)3);  
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),TRUE);  
-    gtk_box_pack_start(GTK_BOX(box3),button,TRUE,TRUE,10);  
-    gtk_widget_show(button);  
-  
-    button = gtk_button_new_with_label("清空");  
-    g_signal_connect(G_OBJECT(button),"clicked",G_CALLBACK(on_button_clicked),(gpointer)1);  
-    gtk_box_pack_start(GTK_BOX(box3),button,TRUE,TRUE,10);  
-    gtk_widget_show(box2);  
-    gtk_widget_show(box1);  
-  
-    button = gtk_button_new_with_label("确认");  
-    g_signal_connect(G_OBJECT(button),"clicked",G_CALLBACK(on_button_clicked),(gpointer)2);  
-    g_signal_connect_swapped(G_OBJECT(button),"clicked",G_CALLBACK(gtk_widget_destroy),window);  
-    gtk_box_pack_start(GTK_BOX(box3),button,TRUE,TRUE,5);  
-    gtk_widget_show(button);  
-    gtk_widget_show_all(window);  
-    gtk_main();  
-    return FALSE;  
-}  
 
 
